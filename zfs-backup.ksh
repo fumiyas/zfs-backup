@@ -386,7 +386,10 @@ if [[ -n "$target_zfs_ss_new" ]]; then
       ${no_run_flag:+-n} \
       ${verbose_flag:+-v} \
       "$target_host" \
-      /sbin/zfs snapshot "$target_zfs_ss_new" 2>&1
+      /sbin/zfs snapshot \
+	${recursive_flag:+-r} \
+	"$target_zfs_ss_new" \
+	2>&1
   )
   if [[ $? -ne 0 ]]; then
     pdie "$target_host: $e"
