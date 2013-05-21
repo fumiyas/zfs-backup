@@ -1,7 +1,9 @@
 #!/bin/ksh
 ##
 ## ZFS backup script
-## Copyright (c) 2011-2012 SATOH Fumiyasu @ OSS Technology Corp., Japan
+## Copyright (c) 2011-2013 SATOH Fumiyasu @ OSS Technology Corp., Japan
+##               https://github.com/fumiyas/zfs-backup
+##               https://twitter.com/satoh_fumiyasu
 ##
 ## License: GNU General Public License version 3
 ## Date: 2012-01-18, since 2011-01-28
