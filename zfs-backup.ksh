@@ -60,8 +60,10 @@ function run_on
 {
   typeset no_run_flag=""
   typeset verbose_flag=""
+  typeset ssh_compress_flag=""
   [[ "$1" = "-n" ]] && { no_run_flag="set"; shift; }
   [[ "$1" = "-v" ]] && { verbose_flag="set"; shift; }
+  [[ "$1" = "-c" ]] && { ssh_compress_flag="set"; shift; }
   typeset host="$1"; shift
 
   if [[ -n "$host" ]] && [[ "$host" != "localhost" ]]; then
@@ -76,7 +78,7 @@ function run_on
     done
 
     set -- ${ZFS_BACKUP_SSH_COMMAND:-ssh} \
-      -C \
+      ${ssh_compress_flag:+-C} \
       ${ZFS_BACKUP_SSH_CONFIG_FILE:+-F "$ZFS_BACKUP_SSH_CONFIG_FILE"} \
       ${ZFS_BACKUP_SSH_BIND_ADDRESS:+-b "$ZFS_BACKUP_SSH_BIND_ADDRESS"} \
       ${ZFS_BACKUP_SSH_IDENTITY_FILE:+-i "$ZFS_BACKUP_SSH_IDENTITY_FILE"} \
@@ -161,6 +163,8 @@ no_run_flag=""
 verbose_flag=""
 recursive_flag=""
 property_flag=""
+ssh_compress_flag=""
+
 zfs_ss_format='%Y-%m-%dT%H:%M:%S'
 zfs_ss_glob='20[0-9][0-9]-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6][0-9]'
 zfs_ss_time=$(unset TZ; date "+$zfs_ss_format")
@@ -180,6 +184,8 @@ Options:
     Recursively backup all children
  -p, --property
     Backup properties
+ -c, --ssh-compress
+    Compress data on SSH connection
  -t, --target-snapshot-limit NUMBER
     Maximam number of snapshots for the target ZFS
     (default: $target_zfs_ss_count_limit)
@@ -233,6 +239,9 @@ while [ "$#" -gt 0 ]; do
     ;;
  -p|--property)
     property_flag="set"
+    ;;
+ -z|--ssh-compress)
+    ssh_compress_flag="set"
     ;;
  -t|--target-snapshot-limit)
     getopts_want_arg "$OPT" ${1+"$1"}
@@ -403,6 +412,7 @@ fi
 run_on \
   ${no_run_flag:+-n} \
   ${verbose_flag:+-v} \
+  ${ssh_compress_flag:+-c} \
   "$target_host" \
   /sbin/zfs send \
     ${verbose_flag:+-v} \
