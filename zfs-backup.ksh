@@ -245,29 +245,29 @@ while [ "$#" -gt 0 ]; do
   -v|--verbose)
     verbose_flag="set"
     ;;
- -N|--no-create-snapshot)
+  -N|--no-create-snapshot)
     zfs_ss_time=""
     ;;
- -R|--recursive)
+  -R|--recursive)
     recursive_flag="set"
     ;;
- -p|--property)
+  -p|--property)
     property_flag="set"
     ;;
- -z|--ssh-compress)
+  -z|--ssh-compress)
     ssh_compress_flag="set"
     ;;
- -b|--ssh-buffer)
+  -b|--ssh-buffer)
     ssh_buffer_flag="set"
     ;;
- -t|--target-snapshot-limit)
+  -t|--target-snapshot-limit)
     getopts_want_arg "$OPT" ${1+"$1"}
     if [[ -z "$1" ]] || [[ "$1" = @([!0-9]) ]]; then
       pdie "Invalid value for option: $OPT $1"
     fi
     target_zfs_ss_count_limit="$1"; shift
     ;;
- -b|--backup-snapshot-limit)
+  -b|--backup-snapshot-limit)
     getopts_want_arg "$OPT" ${1+"$1"}
     if [[ -z "$1" ]] || [[ "$1" = @([!0-9]) ]]; then
       pdie "Invalid value for option: $OPT $1"
