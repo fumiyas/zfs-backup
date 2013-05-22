@@ -56,6 +56,14 @@ ZFS のスナップショット作成機能 (zfs snapshot) と差分転送機能
 
 ZFS のプロパティもバックアップします。
 
+### -c, --ssh-compress
+
+SSH 通信データの圧縮を有効にします。
+
+### -b, --ssh-buffer
+
+zfs send と SSH 通信の間のバッファリングを有効にします。
+
 ### -t, --target-snapshot-limit NUMBER
 
 バックアップ対象に保持しておくスナップショットの最大数です。

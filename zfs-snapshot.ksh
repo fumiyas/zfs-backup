@@ -6,7 +6,6 @@
 ##               https://twitter.com/satoh_fumiyasu
 ##
 ## License: GNU General Public License version 3
-## Date: 2013-05-21, since 2013-05-21
 ##
 
 if ! PATH= type builtin >/dev/null 2>&1; then
@@ -60,8 +59,12 @@ function run_on
 {
   typeset no_run_flag=""
   typeset verbose_flag=""
+  typeset ssh_compress_flag=""
+  typeset output_buffering_flag=""
   [[ "$1" = "-n" ]] && { no_run_flag="set"; shift; }
   [[ "$1" = "-v" ]] && { verbose_flag="set"; shift; }
+  [[ "$1" = "-c" ]] && { ssh_compress_flag="set"; shift; }
+  [[ "$1" = "-o" ]] && { output_buffering_flag="set"; shift; }
   typeset host="$1"; shift
 
   if [[ -n "$host" ]] && [[ "$host" != "localhost" ]]; then
@@ -76,7 +79,7 @@ function run_on
     done
 
     set -- ${ZFS_BACKUP_SSH_COMMAND:-ssh} \
-      -C \
+      ${ssh_compress_flag:+-C} \
       ${ZFS_BACKUP_SSH_CONFIG_FILE:+-F "$ZFS_BACKUP_SSH_CONFIG_FILE"} \
       ${ZFS_BACKUP_SSH_BIND_ADDRESS:+-b "$ZFS_BACKUP_SSH_BIND_ADDRESS"} \
       ${ZFS_BACKUP_SSH_IDENTITY_FILE:+-i "$ZFS_BACKUP_SSH_IDENTITY_FILE"} \
@@ -92,7 +95,16 @@ function run_on
     return 0
   fi
 
-  "$@"
+  if [[ -n "$output_buffering_flag" ]]; then
+    if [[ -n "$host" ]] && [[ "$host" != "localhost" ]]; then
+      "$@" \|dd obs=1048576 2\>/dev/null \|dd obs=1048576 2\>/dev/null
+    else
+      "$@" |dd obs=1048576 2>/dev/null |dd obs=1048576 2>/dev/null
+    fi
+  else
+    "$@"
+  fi
+
   return $?
 }
 

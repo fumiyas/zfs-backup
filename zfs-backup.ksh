@@ -6,7 +6,6 @@
 ##               https://twitter.com/satoh_fumiyasu
 ##
 ## License: GNU General Public License version 3
-## Date: 2012-01-18, since 2011-01-28
 ##
 
 if ! PATH= type builtin >/dev/null 2>&1; then
