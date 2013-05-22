@@ -61,9 +61,11 @@ function run_on
   typeset no_run_flag=""
   typeset verbose_flag=""
   typeset ssh_compress_flag=""
+  typeset output_buffering_flag=""
   [[ "$1" = "-n" ]] && { no_run_flag="set"; shift; }
   [[ "$1" = "-v" ]] && { verbose_flag="set"; shift; }
   [[ "$1" = "-c" ]] && { ssh_compress_flag="set"; shift; }
+  [[ "$1" = "-o" ]] && { output_buffering_flag="set"; shift; }
   typeset host="$1"; shift
 
   if [[ -n "$host" ]] && [[ "$host" != "localhost" ]]; then
@@ -94,7 +96,16 @@ function run_on
     return 0
   fi
 
-  "$@"
+  if [[ -n "$output_buffering_flag" ]]; then
+    if [[ -n "$host" ]] && [[ "$host" != "localhost" ]]; then
+      "$@" \|dd obs=1048576 2\>/dev/null \|dd obs=1048576 2\>/dev/null
+    else
+      "$@" |dd obs=1048576 2>/dev/null |dd obs=1048576 2>/dev/null
+    fi
+  else
+    "$@"
+  fi
+
   return $?
 }
 
@@ -164,6 +175,7 @@ verbose_flag=""
 recursive_flag=""
 property_flag=""
 ssh_compress_flag=""
+ssh_buffer_flag=""
 
 zfs_ss_format='%Y-%m-%dT%H:%M:%S'
 zfs_ss_glob='20[0-9][0-9]-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6][0-9]'
@@ -186,6 +198,8 @@ Options:
     Backup properties
  -c, --ssh-compress
     Compress data on SSH connection
+ -b, --ssh-buffer
+    Enable buffering between 'zfs send' and SSH
  -t, --target-snapshot-limit NUMBER
     Maximam number of snapshots for the target ZFS
     (default: $target_zfs_ss_count_limit)
@@ -242,6 +256,9 @@ while [ "$#" -gt 0 ]; do
     ;;
  -z|--ssh-compress)
     ssh_compress_flag="set"
+    ;;
+ -b|--ssh-buffer)
+    ssh_buffer_flag="set"
     ;;
  -t|--target-snapshot-limit)
     getopts_want_arg "$OPT" ${1+"$1"}
@@ -413,6 +430,7 @@ run_on \
   ${no_run_flag:+-n} \
   ${verbose_flag:+-v} \
   ${ssh_compress_flag:+-c} \
+  ${ssh_buffer_flag:+-o} \
   "$target_host" \
   /sbin/zfs send \
     ${verbose_flag:+-v} \
