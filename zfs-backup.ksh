@@ -8,7 +8,7 @@
 ## License: GNU General Public License version 3
 ##
 
-if ! PATH= type builtin >/dev/null 2>&1; then
+if ! PATH='' type builtin >/dev/null 2>&1; then
   if [[ -x "/bin/ksh93" ]]; then
     exec /bin/ksh93 "$0" "$@"
     exit 1
@@ -147,7 +147,7 @@ function zfs_canonical_name
       "$host" \
       /sbin/zfs get -H -o name,value mountpoint \
     |while read -r zfs_name_c zfs_mountpoint_c; do
-      if [[ $zfs_mountpoint_c = $zfs_mountpoint ]]; then
+      if [[ $zfs_mountpoint_c = "$zfs_mountpoint" ]]; then
 	zfs_name="$zfs_name_c"
 	break
       fi
