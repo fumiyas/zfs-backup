@@ -1,7 +1,7 @@
 #!/bin/ksh
 ##
 ## ZFS backup script
-## Copyright (c) 2011-2013 SATOH Fumiyasu @ OSS Technology Corp., Japan
+## Copyright (c) 2011-2015 SATOH Fumiyasu @ OSS Technology Corp., Japan
 ##               https://github.com/fumiyas/zfs-backup
 ##               https://twitter.com/satoh_fumiyasu
 ##
@@ -352,7 +352,7 @@ else
   |head -n 1 \
   |read -r zfs_ss
   if [[ -z "$zfs_ss" ]]; then
-    pdie "$taget_host: No ZFS snapshot found: $target_zfs"
+    pdie "$target_host: No ZFS snapshot found: $target_zfs"
   fi
   zfs_ss_time="${zfs_ss##*@}"
   target_zfs_ss_last="$target_zfs@$zfs_ss_time"
